@@ -14,7 +14,7 @@ import requests, re, datetime, json, time
 
 URL = "https://www.kmou.ac.kr/coop/dv/dietView/selectDietCalendarView.do?mi=1190"
 
-ACCESS_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwibmFtZSI6IkNyYXdsaW5nU3lzIiwidXNlcm5hbWUiOiJjcmF3bGluZ3N5cyIsInJvbGUiOlsiUk9MRV9TWVNURU0iXSwiaWF0IjoxNzU2Nzk4MDU1LCJleHAiOjE3NTY3OTk4NTV9.ZP3MZJXllj_zQ99sdyXB3Avb2N37SMTgyscCJ9EtKGw"
+ACCESS_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MTMsIm5hbWUiOiLsi5zsiqTthZwiLCJ1c2VybmFtZSI6InN5c3RlbSIsInJvbGUiOlsiUk9MRV9TWVNURU0iXSwiaWF0IjoxNzU3OTI1MDk4LCJleHAiOjE3NTc5MjY4OTh9.DOiOf_BEIPqAg0x_peWMd2aCvVdIUTe4pA6gxv1uIEk"
 POST_ENDPOINT = "http://58.238.182.100:9000/api/system/crawling-menu"
 
 CAF_STUDENT = "STUDENT"

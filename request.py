@@ -2,8 +2,8 @@
 import requests
 
 data = {
-    "username": "crawlingsys",
-    "password": "cs"
+    "username": "system",
+    "password": "mostem2025!"
 }
 
 url = "http://58.238.182.100:9000/api/member/login"

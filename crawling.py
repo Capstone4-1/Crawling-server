@@ -14,8 +14,8 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
 # ===== 설정 =====
-ACCESS_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwibmFtZSI6IkNyYXdsaW5nU3lzIiwidXNlcm5hbWUiOiJjcmF3bGluZ3N5cyIsInJvbGUiOlsiUk9MRV9TWVNURU0iXSwiaWF0IjoxNzU2Nzk4MDU1LCJleHAiOjE3NTY3OTk4NTV9.ZP3MZJXllj_zQ99sdyXB3Avb2N37SMTgyscCJ9EtKGw"  # 🔐 교체
-CUTOFF_DATE_STR = "2025-09-02"
+ACCESS_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MTMsIm5hbWUiOiLsi5zsiqTthZwiLCJ1c2VybmFtZSI6InN5c3RlbSIsInJvbGUiOlsiUk9MRV9TWVNURU0iXSwiaWF0IjoxNzU3OTI1MDk4LCJleHAiOjE3NTc5MjY4OTh9.DOiOf_BEIPqAg0x_peWMd2aCvVdIUTe4pA6gxv1uIEk"  # 🔐 교체
+CUTOFF_DATE_STR = "2025-08-25"
 CUTOFF_DATE: date = datetime.strptime(CUTOFF_DATE_STR, "%Y-%m-%d").date()
 
 LIST_BASE = "https://www.kmou.ac.kr/kmou/na/ntt/selectNttList.do?mi=2032&bbsId=10373"
