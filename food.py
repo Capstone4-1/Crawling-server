@@ -14,8 +14,8 @@ import requests, re, datetime, json, time
 
 URL = "https://www.kmou.ac.kr/coop/dv/dietView/selectDietCalendarView.do?mi=1190"
 
-ACCESS_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MTMsIm5hbWUiOiLsi5zsiqTthZwiLCJ1c2VybmFtZSI6InN5c3RlbSIsInJvbGUiOlsiUk9MRV9TWVNURU0iXSwiaWF0IjoxNzU3OTI1MDk4LCJleHAiOjE3NTc5MjY4OTh9.DOiOf_BEIPqAg0x_peWMd2aCvVdIUTe4pA6gxv1uIEk"
-POST_ENDPOINT = "http://58.238.182.100:9000/api/system/crawling-menu"
+ACCESS_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MTMsIm5hbWUiOiLsi5zsiqTthZwiLCJ1c2VybmFtZSI6InN5c3RlbSIsInJvbGUiOlsiUk9MRV9TWVNURU0iXSwiaWF0IjoxNzYwNTEzMDkwLCJleHAiOjE3NjA1MTQ4OTB9.sCT5d685wg33TIuXrI16VTZ6QO4LN3kQEYmq2ObDGLo"
+POST_ENDPOINT = "https://kmoumoai.site/api/system/crawling-menu"
 
 CAF_STUDENT = "STUDENT"
 CAF_STAFF   = "STAFF"
@@ -227,7 +227,7 @@ def post_menu_by_batches(menu_week, batch_days=7):
 
 # ---------- run ----------
 if __name__ == "__main__":
-    year, month = 2025, 9
+    year, month = 2025, 10
     data = crawl_month_both_views(year, month)
 
     # 1) 콘솔에서 확인 (프론트 사용 구조)

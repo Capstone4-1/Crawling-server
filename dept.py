@@ -15,15 +15,15 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
 # ===== 설정 =====
-ACCESS_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MTMsIm5hbWUiOiLsi5zsiqTthZwiLCJ1c2VybmFtZSI6InN5c3RlbSIsInJvbGUiOlsiUk9MRV9TWVNURU0iXSwiaWF0IjoxNzU3OTMxMDk2LCJleHAiOjE3NTc5MzI4OTZ9.ua_lZEHGbQ-s7iTn92AukccA7tzH5Dun9v4oJJY7yN0"  # 🔐 서버 토큰
-CUTOFF_DATE_STR = "2025-08-01"  # 포함 기준일(이 날짜 이상만 전송)
+ACCESS_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MTMsIm5hbWUiOiLsi5zsiqTthZwiLCJ1c2VybmFtZSI6InN5c3RlbSIsInJvbGUiOlsiUk9MRV9TWVNURU0iXSwiaWF0IjoxNzYwNTEzMDkwLCJleHAiOjE3NjA1MTQ4OTB9.sCT5d685wg33TIuXrI16VTZ6QO4LN3kQEYmq2ObDGLo"  # 🔐 서버 토큰
+CUTOFF_DATE_STR = "2025-10-11"  # 포함 기준일(이 날짜 이상만 전송)
 CUTOFF_DATE: date = datetime.strptime(CUTOFF_DATE_STR, "%Y-%m-%d").date()
 
 # 전송 엔드포인트 (기존과 동일)
-POST_ENDPOINT = "http://58.238.182.100:9000/api/system/crawling-notice/dept"
+POST_ENDPOINT = "https://kmoumoai.site/api/system/crawling-notice/dept"
 
 TIMEOUT_SEC = 12
-BATCH_SIZE = 10
+BATCH_SIZE = 1
 CONNECT_TIMEOUT = 10
 READ_TIMEOUT = 180
 MAX_RETRIES_PER_BATCH = 3

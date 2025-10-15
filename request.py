@@ -6,7 +6,7 @@ data = {
     "password": "mostem2025!"
 }
 
-url = "http://58.238.182.100:9000/api/member/login"
+url = "https://kmoumoai.site/api/member/login"
 
 try:
     response = requests.post(url, json=data)

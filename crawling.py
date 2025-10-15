@@ -14,18 +14,18 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
 # ===== 설정 =====
-ACCESS_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MTMsIm5hbWUiOiLsi5zsiqTthZwiLCJ1c2VybmFtZSI6InN5c3RlbSIsInJvbGUiOlsiUk9MRV9TWVNURU0iXSwiaWF0IjoxNzU3OTI1MDk4LCJleHAiOjE3NTc5MjY4OTh9.DOiOf_BEIPqAg0x_peWMd2aCvVdIUTe4pA6gxv1uIEk"  # 🔐 교체
-CUTOFF_DATE_STR = "2025-08-25"
+ACCESS_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MTMsIm5hbWUiOiLsi5zsiqTthZwiLCJ1c2VybmFtZSI6InN5c3RlbSIsInJvbGUiOlsiUk9MRV9TWVNURU0iXSwiaWF0IjoxNzYwNTEzMDkwLCJleHAiOjE3NjA1MTQ4OTB9.sCT5d685wg33TIuXrI16VTZ6QO4LN3kQEYmq2ObDGLo"  # 🔐 교체
+CUTOFF_DATE_STR = "2025-10-11"
 CUTOFF_DATE: date = datetime.strptime(CUTOFF_DATE_STR, "%Y-%m-%d").date()
 
 LIST_BASE = "https://www.kmou.ac.kr/kmou/na/ntt/selectNttList.do?mi=2032&bbsId=10373"
-POST_ENDPOINT = "http://58.238.182.100:9000/api/system/crawling-notice/univ"
+POST_ENDPOINT = "https://kmoumoai.site/api/system/crawling-notice/univ"
 
 TIMEOUT_SEC = 12
 INCLUDE_STICKY_ONLY_FIRST_PAGE = True
 
 # 전송 배치/재시도 (고정 배치 10)
-BATCH_SIZE = 10
+BATCH_SIZE = 1
 CONNECT_TIMEOUT = 10
 READ_TIMEOUT = 180
 MAX_RETRIES_PER_BATCH = 3
