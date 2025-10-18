@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-# KMOU 식단 크롤러 → menuWeek 생성 → {"items":[{date, studentCafeteria, staffCafeteria}]} 로 POST
-# 정식: SET_MENU
-
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
@@ -12,15 +8,15 @@ from bs4 import BeautifulSoup
 from collections import defaultdict
 import requests, re, datetime, json, time
 
-URL = "https://www.kmou.ac.kr/coop/dv/dietView/selectDietCalendarView.do?mi=1190"
+# ===== config 상수 =====
+from config import START_BASE_MENU, POST_ENDPOINT_MENU, CRAWL_LOG_URL
 
-ACCESS_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MTMsIm5hbWUiOiLsi5zsiqTthZwiLCJ1c2VybmFtZSI6InN5c3RlbSIsInJvbGUiOlsiUk9MRV9TWVNURU0iXSwiaWF0IjoxNzYwNTEzMDkwLCJleHAiOjE3NjA1MTQ4OTB9.sCT5d685wg33TIuXrI16VTZ6QO4LN3kQEYmq2ObDGLo"
-POST_ENDPOINT = "https://kmoumoai.site/api/system/crawling-menu"
-
+URL = START_BASE_MENU
+POST_ENDPOINT = POST_ENDPOINT_MENU
 CAF_STUDENT = "STUDENT"
-CAF_STAFF   = "STAFF"
+CAF_STAFF = "STAFF"
+
 MEAL_MAP    = {"조식": "BREAKFAST", "중식": "LUNCH", "석식": "DINNER"}
-# 정식은 SET_MENU
 CORNER_MAP  = {"양식코너": "WESTERN", "라면코너": "RAMEN", "분식코너": "SNACK", "정식": "SET_MENU"}
 
 # ---------- parsing helpers ----------
@@ -152,9 +148,7 @@ def crawl_month_both_views(year: int, month: int):
                 c = it["cornerType"]; student[c].append(it["name"])
             else:
                 m = it["mealType"];   staffm[m].append(it["name"])
-        # 중복 제거 + 빈 키 제거(Map<Enum, List<String>>에 맞춤)
-        def dedup_keep(vs): s=set(); out=[]; 
-        # (한 줄로 쓰면 가독성 나빠서 풀어서)
+        # 중복 제거 + 빈 키 제거
         def dedup_keep(vs):
             s=set(); out=[]
             for x in vs:
@@ -166,8 +160,8 @@ def crawl_month_both_views(year: int, month: int):
         menu_week.append({"date": d, "studentCafeteria": student, "staffCafeteria": staffm})
     return {"menuWeek": menu_week}
 
-# ---------- POST: items = List<{date, studentCafeteria, staffCafeteria}> ----------
-def post_items(items, endpoint=POST_ENDPOINT, token=ACCESS_TOKEN, timeout=(5,25)):
+# ---------- POST ----------
+def post_items(items, endpoint=POST_ENDPOINT, token=None, timeout=(5,25)):
     headers = {
         "Authorization": f"Bearer {token}",
         "Content-Type": "application/json; charset=utf-8",
@@ -178,27 +172,15 @@ def post_items(items, endpoint=POST_ENDPOINT, token=ACCESS_TOKEN, timeout=(5,25)
     resp = requests.post(endpoint, headers=headers, data=data, timeout=timeout)
     return resp
 
-def post_menu_by_batches(menu_week, batch_days=7):
-    """
-    백엔드 요구 스키마:
-    {
-      "items": [
-        { "date":"YYYY-MM-DD",
-          "studentCafeteria": { "WESTERN":[...], "RAMEN":[...], "SNACK":[...], "SET_MENU":[...] },
-          "staffCafeteria":   { "BREAKFAST":[...], "LUNCH":[...], "DINNER":[...] }
-        }, ...
-      ]
-    }
-    """
+def post_menu_by_batches(menu_week, batch_days=7, token = None):
     total = len(menu_week)
     i = 0
     while i < total:
         chunk = menu_week[i:i+batch_days]
         try:
-            resp = post_items(chunk)
+            resp = post_items(chunk, token = token)
             preview = (resp.text or "")[:300]
             if 200 <= resp.status_code < 300:
-                # 응답 JSON에 카운트가 있으면 보여주기
                 saved = inserted = updated = None
                 try:
                     j = resp.json()
@@ -212,30 +194,42 @@ def post_menu_by_batches(menu_week, batch_days=7):
                     print(f"[SAVED] days {i+1}-{i+len(chunk)} / {total} → {resp.status_code} | body:{preview}")
             else:
                 print(f"[FAIL ] days {i+1}-{i+len(chunk)} / {total} → {resp.status_code} | body:{preview}")
-                # 413/400 등 크기 문제면 하루씩 재시도
-                if resp.status_code in (400,413):
-                    for day in chunk:
-                        r = post_items([day])
-                        pv = (r.text or "")[:200]
-                        if 200 <= r.status_code < 300:
-                            print(f"  [SAVED] {day['date']} → {r.status_code} | {pv}")
-                        else:
-                            print(f"  [FAIL ] {day['date']} → {r.status_code} | {pv}")
         except requests.RequestException as e:
             print(f"[ERROR] days {i+1}-{i+len(chunk)} / {total} → {e}")
         i += batch_days
 
 # ---------- run ----------
 if __name__ == "__main__":
+    # 1️⃣ 서버에서 마지막 크롤링 날짜 조회
+    from auth import get_access_token
+    token = get_access_token("system", "mostem2025!")
+    headers = {"Authorization": f"Bearer {token}"}
+    print(token)
+    resp = requests.get(f"{CRAWL_LOG_URL}/MEAL_MENU", headers=headers)
+    if resp.status_code == 200:
+        last_date_str = resp.json().get("lastCrawledAt")
+        cutoff_date = last_date_str if last_date_str else "2025-01-01"
+    else:
+        cutoff_date = "2025-01-01"
+
+    print("✅ 기준 날짜:", cutoff_date)
+    cutoff_date = datetime.datetime.fromisoformat(cutoff_date).date()
+
+    # 2️⃣ 월 단위 크롤링
     year, month = 2025, 10
     data = crawl_month_both_views(year, month)
 
-    # 1) 콘솔에서 확인 (프론트 사용 구조)
-    print(json.dumps(data, ensure_ascii=False, indent=2))
-
-    # 2) 백엔드 저장: items = menuWeek (그대로)
+    # 3️⃣ 기준 날짜 이후만 필터
     menu_week = data.get("menuWeek", [])
+    menu_week = [d for d in menu_week if datetime.date.fromisoformat(d["date"]) > cutoff_date]
+
+#     import pprint
+# pp = pprint.PrettyPrinter(indent=2, width=120)
+# pp.pprint(menu_week)
+# print(f"총 {len(menu_week)}일치 데이터")
+
     if not menu_week:
-        print("[WARN] menuWeek is empty. Nothing to post.")
+        print("[WARN] menuWeek is empty after cutoff. Nothing to post.")
     else:
-        post_menu_by_batches(menu_week, batch_days=7)
+        # 4️⃣ 서버로 전송
+        post_menu_by_batches(menu_week, batch_days=7, token = token)
